@@ -45,6 +45,7 @@ class RoomList extends Component {
         </ul>
         <form
           onSubmit={event => {
+            event.preventDefault();
             this.createRoom(this.state.newRoomName);
           }}
         >
