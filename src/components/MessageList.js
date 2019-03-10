@@ -20,17 +20,20 @@ class MessageList extends Component {
   }
 
   render() {
+    const activeRoomId = this.props.activeRoomId;
     return (
       /*
     return <div className='ActiveRoom'>Current Room: {this.props.ActiveRoom.name}</div>;*/
       <section>
         <div className='messages'>
           <ul>
-            {this.state.messages.map(message => (
-              <li>
-                {message.roomId} {message.content} {message.sentAt} {message.username}
-              </li>
-            ))}
+            {this.state.messages
+              .filter(message => message.roomId === this.props.activeRoom.key)
+              .map((message, index) => (
+                <li key={index}>
+                  {message.roomId} {message.content} {message.sentAt} {message.username}
+                </li>
+              ))}
           </ul>
         </div>
       </section>

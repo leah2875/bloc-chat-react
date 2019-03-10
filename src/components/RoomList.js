@@ -38,12 +38,11 @@ class RoomList extends Component {
       <section className='roomlist'>
         {this.state.rooms.map((room, index) => (
           <div className='room' key={index}>
-            <button key={index} onClick={() => this.props.setActiveRoom}>
+            <button key={index} onClick={() => this.props.setActiveRoom(room)}>
               {room.name}
             </button>
           </div>
         ))}
-
         <form
           onSubmit={event => {
             event.preventDefault();
