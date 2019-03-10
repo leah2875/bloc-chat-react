@@ -36,13 +36,14 @@ class RoomList extends Component {
   render() {
     return (
       <section className='roomlist'>
-        <ul>
-          {this.state.rooms.map((room, index) => (
-            <li className='room' key={index}>
+        {this.state.rooms.map((room, index) => (
+          <div className='room' key={index}>
+            <button key={index} onClick={() => this.props.setActiveRoom}>
               {room.name}
-            </li>
-          ))}
-        </ul>
+            </button>
+          </div>
+        ))}
+
         <form
           onSubmit={event => {
             event.preventDefault();
