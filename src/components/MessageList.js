@@ -27,7 +27,9 @@ class MessageList extends Component {
         <div className='messages'>
           <ul>
             {this.state.messages.map(message => (
-              <li key={message.roomId}>{message.content}</li>
+              <li>
+                {message.roomId} {message.content} {message.sentAt} {message.username}
+              </li>
             ))}
           </ul>
         </div>
