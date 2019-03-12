@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { throws } from "assert";
 
 class RoomList extends Component {
   constructor(props) {
@@ -7,10 +8,12 @@ class RoomList extends Component {
     this.state = {
       rooms: [],
       name: "",
+      newRoomName: "",
     };
 
     this.handleChange = this.handleChange.bind(this);
     this.createRoom = this.createRoom.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
 
     this.roomsRef = this.props.firebase.database().ref("rooms");
   }
@@ -24,6 +27,15 @@ class RoomList extends Component {
 
   handleChange(event) {
     this.setState({ newRoomName: event.target.value });
+  }
+
+  handleSubmit(event) {
+    event.preventDefault();
+    if (!this.state.newRoomName) {
+      return;
+    }
+    const newRoom = { rooms: this.state.newRoomName, isCompleted: false };
+    this.setState({ rooms: [...this.state.rooms, newRoom], newRoomName: "" });
   }
 
   createRoom(newRoomName) {
@@ -45,13 +57,17 @@ class RoomList extends Component {
         ))}
         <form
           onSubmit={event => {
-            event.preventDefault();
             this.createRoom(this.state.newRoomName);
           }}
         >
           <label>
             Create New Room:
-            <input type='text' value={this.state.value} onChange={this.handleChange} />
+            <input
+              type='text'
+              value={this.state.value}
+              onChange={this.handleChange}
+              onSubmit={this.handleSubmit}
+            />
           </label>
           <input type='submit' value='Submit' />
         </form>
