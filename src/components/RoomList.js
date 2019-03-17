@@ -31,7 +31,7 @@ class RoomList extends Component {
 
   handleSubmit(event) {
     event.preventDefault();
-    if (!this.state.newRoomName) {
+    if (!this.state.newRoomName || this.state.newRoomName.trim() == "") {
       return;
     }
     const newRoom = { rooms: this.state.newRoomName, isCompleted: false };
@@ -39,6 +39,9 @@ class RoomList extends Component {
   }
 
   createRoom(newRoomName) {
+    if (!this.state.newRoomName || this.state.newRoomName.trim() == "") {
+      return;
+    }
     this.roomsRef.push({
       name: newRoomName,
     });
@@ -57,6 +60,7 @@ class RoomList extends Component {
         ))}
         <form
           onSubmit={event => {
+            event.preventDefault();
             this.createRoom(this.state.newRoomName);
           }}
         >
