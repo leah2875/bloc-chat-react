@@ -31,21 +31,21 @@ class RoomList extends Component {
 
   handleSubmit(event) {
     event.preventDefault();
-    if (!this.state.newRoomName || this.state.newRoomName.trim() == "") {
+    if (!this.state.newRoomName) {
       return;
     }
-    const newRoom = { rooms: this.state.newRoomName, isCompleted: false };
-    this.setState({ rooms: [...this.state.rooms, newRoom], newRoomName: "" });
+    this.createRoom(this.state.newRoomName);
+    this.setState({ newRoomName: "" });
   }
 
-  createRoom(newRoomName) {
+  createRoom() {
     if (!this.state.newRoomName || this.state.newRoomName.trim() == "") {
       return;
     }
     this.roomsRef.push({
-      name: newRoomName,
+      name: this.state.newRoomName,
     });
-    this.setState({ newRoomName: [] });
+    this.setState({ name: "" });
   }
 
   render() {
@@ -60,18 +60,12 @@ class RoomList extends Component {
         ))}
         <form
           onSubmit={event => {
-            event.preventDefault();
-            this.createRoom(this.state.newRoomName);
+            this.handleSubmit(event);
           }}
         >
           <label>
             Create New Room:
-            <input
-              type='text'
-              value={this.state.value}
-              onChange={this.handleChange}
-              onSubmit={this.handleSubmit}
-            />
+            <input type='text' value={this.state.newRoomName} onChange={this.handleChange} />
           </label>
           <input type='submit' value='Submit' />
         </form>
