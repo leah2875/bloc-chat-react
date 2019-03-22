@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { throws } from "assert";
 
 class MessageList extends Component {
   constructor(props) {
@@ -6,7 +7,12 @@ class MessageList extends Component {
 
     this.state = {
       messages: [],
+      newMessage: "",
     };
+
+    this.handleChange = this.handleChange.bind(this);
+    this.createMessage = this.createMessage.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
 
     this.messagesRef = this.props.firebase.database().ref("messages");
   }
@@ -17,6 +23,27 @@ class MessageList extends Component {
       message.key = snapshot.key;
       this.setState({ messages: this.state.messages.concat(message) });
     });
+  }
+
+  createMessage() {
+    this.messagesRef.push({
+      roomId: this.props.activeRoom.key,
+      content: this.state.newMessage,
+      username: this.props.username,
+    });
+  }
+
+  handleChange(event) {
+    this.setState({ newMessage: event.target.value });
+  }
+
+  handleSubmit(event) {
+    event.preventDefault();
+    if (!this.state.newMessage) {
+      return;
+    }
+    this.createMessage(this.state.newMessage);
+    this.setState({ newMessage: "" });
   }
 
   render() {
@@ -36,6 +63,21 @@ class MessageList extends Component {
               ))}
           </ul>
         </div>
+        <form
+          onSubmit={event => {
+            this.handleSubmit(event);
+          }}
+        >
+          <label>
+            New Message:
+            <input
+              type='text'
+              value={this.state.newMessage}
+              onChange={event => this.handleChange(event)}
+            />
+          </label>
+          <input type='submit' value='Submit' />
+        </form>
       </section>
     );
   }

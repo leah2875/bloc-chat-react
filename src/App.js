@@ -42,6 +42,7 @@ class App extends Component {
             activeRoom={this.state.activeRoom}
             activeRoomId={this.state.activeRoomId}
             firebase={firebase}
+            username={this.state.user ? this.state.user.displayName : "Guest"}
           />
         </div>
 
