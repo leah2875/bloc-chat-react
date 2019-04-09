@@ -14,6 +14,7 @@ class RoomList extends Component {
     this.handleChange = this.handleChange.bind(this);
     this.createRoom = this.createRoom.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.deleteRoom = this.deleteRoom.bind(this);
 
     this.roomsRef = this.props.firebase.database().ref("rooms");
   }
@@ -48,6 +49,13 @@ class RoomList extends Component {
     this.setState({ name: "" });
   }
 
+  deleteRoom() {
+    firebase
+      .database()
+      .ref("rooms")
+      .remove();
+  }
+
   render() {
     return (
       <section className='roomlist'>
@@ -55,6 +63,9 @@ class RoomList extends Component {
           <div className='room' key={index}>
             <button key={index} onClick={() => this.props.setActiveRoom(room)}>
               {room.name}
+            </button>
+            <button key={index} onClick={this.deleteRoom}>
+              x
             </button>
           </div>
         ))}
