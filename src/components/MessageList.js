@@ -13,6 +13,7 @@ class MessageList extends Component {
     this.handleChange = this.handleChange.bind(this);
     this.createMessage = this.createMessage.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleDeleteMessage = this.handleDeleteMessage.bind(this);
 
     this.messagesRef = this.props.firebase.database().ref("messages");
   }
@@ -22,6 +23,11 @@ class MessageList extends Component {
       const message = snapshot.val();
       message.key = snapshot.key;
       this.setState({ messages: this.state.messages.concat(message) });
+    });
+    this.messagesRef.on("child_removed", snapshot => {
+      this.setState({
+        messages: this.state.messages.filter(message => message.key !== snapshot.key),
+      });
     });
   }
 
@@ -46,6 +52,11 @@ class MessageList extends Component {
     this.setState({ newMessage: "" });
   }
 
+  handleDeleteMessage(key) {
+    let messagesRef = this.props.firebase.database().ref("messages/" + key);
+    messagesRef.remove();
+  }
+
   render() {
     const activeRoomId = this.props.activeRoomId;
     return (
@@ -58,7 +69,13 @@ class MessageList extends Component {
               .filter(message => message.roomId === this.props.activeRoom.key)
               .map((message, index) => (
                 <li key={index}>
-                  {message.roomId} {message.content} {message.sentAt} {message.username}
+                  {message.roomId} {message.content} {message.sentAt} {message.username}{" "}
+                  <button
+                    key={"handleDeleteMessage" + index}
+                    onClick={() => this.handleDeleteMessage(message.key)}
+                  >
+                    x
+                  </button>
                 </li>
               ))}
           </ul>

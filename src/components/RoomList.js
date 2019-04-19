@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { throws } from "assert";
+import { runInThisContext } from "vm";
 
 class RoomList extends Component {
   constructor(props) {
@@ -9,12 +10,14 @@ class RoomList extends Component {
       rooms: [],
       name: "",
       newRoomName: "",
+      updateRoomName: "",
     };
 
     this.handleChange = this.handleChange.bind(this);
     this.createRoom = this.createRoom.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.deleteRoom = this.deleteRoom.bind(this);
+    this.handleRename = this.handleRename.bind(this);
 
     this.roomsRef = this.props.firebase.database().ref("rooms");
   }
@@ -23,6 +26,9 @@ class RoomList extends Component {
       const room = snapshot.val();
       room.key = snapshot.key;
       this.setState({ rooms: this.state.rooms.concat(room) });
+    });
+    this.roomsRef.on("child_removed", snapshot => {
+      this.setState({ rooms: this.state.rooms.filter(room => room.key !== snapshot.key) });
     });
   }
 
@@ -49,24 +55,47 @@ class RoomList extends Component {
     this.setState({ name: "" });
   }
 
-  deleteRoom() {
-    firebase
-      .database()
-      .ref("rooms")
-      .remove();
+  deleteRoom(key) {
+    let roomsRef = this.props.firebase.database().ref("rooms/" + key);
+    roomsRef.remove();
   }
+
+  handleRename(event, key) {
+    event.preventDefault();
+    let roomsRef = this.props.firebase.database().ref("rooms/" + key);
+    roomsRef.update({
+      name: this.state.updateRoomName,
+    });
+    this.setState({ updateRoomName: "" });
+  }
+  /*let roomsRef = this.props.firebase.database().ref("rooms/" + key);
+  roomsRef.set({
+    name: this.state.updateRoomName,
+  });
+  this.setState({ updateRoomName: "" });*/
 
   render() {
     return (
       <section className='roomlist'>
         {this.state.rooms.map((room, index) => (
-          <div className='room' key={index}>
-            <button key={index} onClick={() => this.props.setActiveRoom(room)}>
+          <div className='room' key={"room" + index}>
+            <button key={"setActiveRoom" + index} onClick={() => this.props.setActiveRoom(room)}>
               {room.name}
             </button>
-            <button key={index} onClick={this.deleteRoom}>
+            <button key={"deleteRoom" + index} onClick={() => this.deleteRoom(room.key)}>
               x
             </button>
+            <form
+              onSubmit={event => {
+                this.handleRename(event, room.key);
+              }}
+            >
+              <label>
+                Rename Room:
+                <input type='text' name='name' />
+              </label>
+              <input type='submit' value='Submit' />
+            </form>
           </div>
         ))}
         <form

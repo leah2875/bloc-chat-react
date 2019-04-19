@@ -34,11 +34,7 @@ class App extends Component {
       <header>
         <p>Bloc Chat React</p>
         <div className='RoomList'>
-          <RoomList
-            setActiveRoom={this.setActiveRoom.bind(this)}
-            deleteRoom={this.deleteRoom.bind(this)}
-            firebase={firebase}
-          />
+          <RoomList setActiveRoom={this.setActiveRoom.bind(this)} firebase={firebase} />
         </div>
 
         <div className='MessageList'>
